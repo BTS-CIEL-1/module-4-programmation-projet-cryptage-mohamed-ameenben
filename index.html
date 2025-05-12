@@ -208,59 +208,106 @@
     </div>
     
     <script>
-        // Script pour gérer les onglets et les interactions
-        document.addEventListener('DOMContentLoaded', function() {
-            // Gestion des onglets
-            const tabs = document.querySelectorAll('.login-tabs .tab');
-            const tabContents = document.querySelectorAll('.tab-content');
-            
-            tabs.forEach(tab => {
-                tab.addEventListener('click', function() {
-                    const tabId = this.getAttribute('data-tab');
-                    
-                    // Désactiver tous les onglets et contenus
-                    tabs.forEach(t => t.classList.remove('active'));
-                    tabContents.forEach(c => c.classList.remove('active'));
-                    
-                    // Activer l'onglet et le contenu sélectionnés
-                    this.classList.add('active');
-                    document.getElementById(tabId + '-form').classList.add('active');
-                });
-            });
-            
-            // Gestion des boutons pour afficher/masquer le mot de passe
-            const toggleButtons = document.querySelectorAll('.toggle-password');
-            
-            toggleButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const input = this.previousElementSibling.previousElementSibling;
-                    const icon = this.querySelector('i');
-                    
-                    if (input.type === 'password') {
-                        input.type = 'text';
-                        icon.classList.replace('fa-eye', 'fa-eye-slash');
-                    } else {
-                        input.type = 'password';
-                        icon.classList.replace('fa-eye-slash', 'fa-eye');
-                    }
-                });
-            });
-            
-            // Animation des boutons
-            const submitButtons = document.querySelectorAll('.submit-btn');
-            
-            submitButtons.forEach(button => {
-                button.addEventListener('mouseenter', function() {
-                    this.querySelector('.btn-icon').style.width = '3rem';
-                    this.querySelector('.btn-text').style.transform = 'translateX(-0.5rem)';
-                });
+    // Script pour gérer les onglets et les interactions
+    document.addEventListener('DOMContentLoaded', function() {
+        // Gestion des onglets
+        const tabs = document.querySelectorAll('.login-tabs .tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                const tabId = this.getAttribute('data-tab');
                 
-                button.addEventListener('mouseleave', function() {
-                    this.querySelector('.btn-icon').style.width = '0';
-                    this.querySelector('.btn-text').style.transform = 'translateX(0)';
-                });
+                // Désactiver tous les onglets et contenus
+                tabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                
+                // Activer l'onglet et le contenu sélectionnés
+                this.classList.add('active');
+                document.getElementById(tabId + '-form').classList.add('active');
             });
         });
-    </script>
+        
+        // Gestion des boutons pour afficher/masquer le mot de passe
+        const toggleButtons = document.querySelectorAll('.toggle-password');
+        
+        toggleButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const input = this.previousElementSibling.previousElementSibling;
+                const icon = this.querySelector('i');
+                
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.classList.replace('fa-eye', 'fa-eye-slash');
+                } else {
+                    input.type = 'password';
+                    icon.classList.replace('fa-eye-slash', 'fa-eye');
+                }
+            });
+        });
+        
+        // Animation des boutons
+        const submitButtons = document.querySelectorAll('.submit-btn');
+        
+        submitButtons.forEach(button => {
+            button.addEventListener('mouseenter', function() {
+                this.querySelector('.btn-icon').style.width = '3rem';
+                this.querySelector('.btn-text').style.transform = 'translateX(-0.5rem)';
+            });
+            
+            button.addEventListener('mouseleave', function() {
+                this.querySelector('.btn-icon').style.width = '0';
+                this.querySelector('.btn-text').style.transform = 'translateX(0)';
+            });
+        });
+
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+
+        // Gérer l'inscription
+        registerForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('register-name').value;
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+
+            const response = await fetch('/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name, email, password })
+            });
+
+            const result = await response.json();
+            alert(result.message);
+        });
+
+        // Gérer la connexion
+        loginForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, password })
+            });
+
+            const result = await response.json();
+            alert(result.message);
+
+            // Si la connexion est réussie, rediriger vers cryptage.html
+            if (response.ok) {
+                window.location.href = 'cryptage.html'; // Rediriger vers cryptage.html
+            }
+        });
+    });
+</script>
 </body>
 </html>
